@@ -75,9 +75,21 @@ export default {
     login () {
       this.$refs.loginFrom.validate((isOk) => {
         if (isOk) {
-          this.$message({ type: 'success', message: '成功' })
-        } else {
-          this.$message({ type: 'warning', message: '失败' })
+          // 请求
+          this.$axios({
+          //  axios中data中放置body参数 params是放置地址参数的
+            url: '/authorizations',
+            method: 'post',
+            data: this.loginFrom
+          }).then(res => {
+            // 获取token  res.data.data.token
+            // 放到前端的缓存中
+            window.localStorage.setItem('user-token', res.data.data.token)
+            // 编程式导航跳转到home页面上
+            this.$roter.push('/')
+          }).catch(() => {
+            this.$message({ message: '手机号或者验证码错误' }, { type: 'warning' })
+          })
         }
       })
     }
