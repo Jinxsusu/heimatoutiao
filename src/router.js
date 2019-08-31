@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/home.vue'
+import Home from './views/home/home'
 // views一般来说是放置路由级组件,就是直接挂到路由表上的components的组件,相当于我们原来的一个个页面
-import Login from './views/login'
+import Login from './views/login/index'
 
 Vue.use(Router)
 
