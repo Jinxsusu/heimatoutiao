@@ -5,21 +5,23 @@
         <img src="../../assets/img/logo_index.png" alt="">
       </div>
       <!-- 表单组件  el-form表单容器-->
-      <el-form style='margin-top:20px'>
-        <!-- 表单项 -->
-        <el-form-item>
+      <!-- 数据校验 首先要给这个标签一个model属性  -->
+      <el-form ref="loginFrom" :model="loginFrom" :rules="loginRules" style='margin-top:20px'>
+        <!-- 表单项 prop绑定需要校验的字段名 但是不写loginFrom.mobile只写mobile -->
+        <el-form-item prop="mobile">
           <!-- 放置组件内容 -->
-          <el-input></el-input>
+          <!-- 绑定手机号 -->
+          <el-input v-model="loginFrom.mobile"  placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item>
-           <el-input style='width:280px'></el-input>
+        <el-form-item prop="code">
+           <el-input v-model="loginFrom.code"  placeholder="请输入验证码" style='width:280px'></el-input>
            <el-button style='float:right'>发送验证码</el-button>
         </el-form-item>
-        <el-form-item>
-            <el-checkbox>我已阅读并同意用户协议和隐私条款</el-checkbox>
+        <el-form-item prop="check">
+            <el-checkbox v-model="loginFrom.check" >我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style='width:100%'>登录</el-button>
+          <el-button @click="login" type="primary" style='width:100%'>登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -29,6 +31,57 @@
 <script>
 export default {
 
+  data () {
+    let validator = function (rule, value, callback) {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('您必须同意'))
+      }
+    }
+    return {
+      loginFrom: {
+        mobile: '', // 手机号 默认值为空
+        code: '', // 验证码
+        check: false// 是否勾选协议
+      },
+      // loginRules定义校验规则 表单是根规则去校验 没有规则就没有校验
+      // key(字段名):value(数组对象=>多个=> 一个字段 可能有一个或者多个校验规则据规则)
+      loginRules: {
+        mobile: [{
+          required: true, // 是一个布尔值如果为true就是必填项
+          message: '手机号不能为空'
+        },
+        {
+          pattern: /^1[3456789]\d{9}$/,
+          message: '手机号格式不正确'
+        }
+        ],
+        code: [{
+          required: true, // 是一个布尔值如果为true就是必填项
+          message: '验证码不能为空'
+        },
+        {
+          pattern: /^\d{6}$/,
+          message: '验证码格式不正确'
+        }],
+        check: [{
+          validator
+        }]
+      }
+    }
+  },
+  methods: {
+    login () {
+      this.$refs.loginFrom.validate((isOk) => {
+        if (isOk) {
+          this.$message({ type: 'success', message: '成功' })
+        } else {
+          this.$message({ type: 'warning', message: '失败' })
+        }
+      })
+    }
+  }
 }
 </script>
 
