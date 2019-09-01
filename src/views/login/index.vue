@@ -6,19 +6,20 @@
       </div>
       <!-- 表单组件  el-form表单容器-->
       <!-- 数据校验 首先要给这个标签一个model属性  -->
-      <el-form ref="loginFrom" :model="loginFrom" :rules="loginRules" style='margin-top:20px'>
-        <!-- 表单项 prop绑定需要校验的字段名 但是不写loginFrom.mobile只写mobile -->
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" style='margin-top:20px'>
+        <!-- 表单项 prop绑定需要校验的字段名 但是不写loginForm.mobile只写mobile -->
         <el-form-item prop="mobile">
           <!-- 放置组件内容 -->
           <!-- 绑定手机号 -->
-          <el-input v-model="loginFrom.mobile"  placeholder="请输入手机号"></el-input>
+          <el-input v-model="loginForm.mobile"  placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item prop="code">
-           <el-input v-model="loginFrom.code"  placeholder="请输入验证码" style='width:280px'></el-input>
+           <el-input v-model="loginForm.code"  placeholder="请输入验证码" style='width:280px'
+           ></el-input>
            <el-button style='float:right'>发送验证码</el-button>
         </el-form-item>
         <el-form-item prop="check">
-            <el-checkbox v-model="loginFrom.check" >我已阅读并同意用户协议和隐私条款</el-checkbox>
+            <el-checkbox v-model="loginForm.check" >我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button @click="login" type="primary" style='width:100%'>登录</el-button>
@@ -40,7 +41,7 @@ export default {
       }
     }
     return {
-      loginFrom: {
+      loginForm: {
         mobile: '', // 手机号 默认值为空
         code: '', // 验证码
         check: false// 是否勾选协议
@@ -73,22 +74,25 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.loginFrom.validate((isOk) => {
+      this.$refs.loginForm.validate((isOk) => {
         if (isOk) {
           // 请求
           this.$axios({
           //  axios中data中放置body参数 params是放置地址参数的
             url: '/authorizations',
             method: 'post',
-            data: this.loginFrom
+            data: this.loginForm
           }).then(res => {
             // 获取token  res.data.data.token
             // 放到前端的缓存中
             window.localStorage.setItem('user-token', res.data.data.token)
             // 编程式导航跳转到home页面上
-            this.$roter.push('/')
+            this.$router.push('/')
           }).catch(() => {
-            this.$message({ message: '手机号或者验证码错误' }, { type: 'warning' })
+            this.$message({
+              message: '手机号或者验证码错误',
+              type: 'warning'
+            })
           })
         }
       })
@@ -98,7 +102,7 @@ export default {
 </script>
 
 <style lang='less' scoped>
-// 如果要用less/scss等预处理css语言的话 需要给一个lang属性 lang='less' lang='scss'
+// 如果要用less/scss等预处理css语言的话 需要给一个lang属性 lang='less'
 // lang属性 是对但css进行语言指定
 // scoped 只针对当前的组件样式起作用
 // 100vh 就是占据当前的屏幕的100%
