@@ -1,7 +1,7 @@
 <template>
   <el-row class="layout-header" type="flex" justify="space-between">
     <!-- span 是给col的宽度 UI将页面分为24分 -->
-    <el-col :span="6">
+    <el-col :span="6" class="left">
       <i class="el-icon-s-unfold icon"></i>
       <span>江苏传智播客教育科技股份有限公司</span>
     </el-col>
@@ -32,7 +32,7 @@ export default {}
   .left {
     .icon {
       font-size: 22px;
-      margin-right: 15px;
+      margin-right: 3px;
     }
     display: flex;
     align-items: center;

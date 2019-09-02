@@ -12,7 +12,7 @@
         <span slot="title">首页</span>
       </el-menu-item>
       <!-- <el-menu-item>是有折叠的菜单 -->
-      <el-submenu>
+      <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-s-order"></i>
         </template>
@@ -22,7 +22,8 @@
         <el-menu-item>评论列表</el-menu-item>
         <el-menu-item>素材管理</el-menu-item>
       </el-submenu>
-      <el-submenu>
+      <el-submenu index="2">
+        <!-- 为了区分不同的下拉菜单 -->
         <template slot="title">
           <i class="el-icon-s-custom"></i>
           <span>粉丝管理</span>
