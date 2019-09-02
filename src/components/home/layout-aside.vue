@@ -5,8 +5,10 @@
     <div class="title">
       <img src="../../assets/img/logo_admin.png" />
     </div>
-
-    <el-menu background-color="#323745" text-color="#adafb5" active-text-color="#ffd04b">
+    <el-menu style="border:none"
+    background-color="#323745"
+    text-color="#adafb5"
+    active-text-color="#ffd04b">
       <el-menu-item index="2">
         <i class="el-icon-s-home"></i>
         <span slot="title">首页</span>
