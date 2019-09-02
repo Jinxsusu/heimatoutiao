@@ -33,12 +33,9 @@ export default {
   methods: {
     // 发送请求获取用户数据
     getUserInfo () {
-      // 获取token
-      let token = window.localStorage.getItem('user-token')
       // 发送请求
       this.$axios({
-        url: '/user/profile',
-        headers: { Authorization: 'Bearer ' + token }
+        url: '/user/profile'
       }).then(res => {
         this.userInfo = res.data.data
       })
