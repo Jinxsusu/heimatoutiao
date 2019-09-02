@@ -85,7 +85,7 @@ export default {
           }).then(res => {
             // 获取token  res.data.data.token
             // 放到前端的缓存中
-            window.localStorage.setItem('user-token', res.data.data.token)
+            window.localStorage.setItem('user-token', res.data.token)
             // 编程式导航跳转到home页面上
             this.$router.push('/')
           }).catch(() => {

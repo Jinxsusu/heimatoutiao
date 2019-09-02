@@ -37,7 +37,7 @@ export default {
       this.$axios({
         url: '/user/profile'
       }).then(res => {
-        this.userInfo = res.data.data
+        this.userInfo = res.data
       })
     },
     handleCommand (command) {
@@ -76,6 +76,7 @@ export default {
       border-radius: 50%;
       margin-right: 5px;
       width: 35px;
+      height: 35px;
     }
   }
 }
