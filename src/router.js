@@ -24,10 +24,11 @@ export default new Router({
     children: [{
       path: '',
       component: Main
-    }]
-  }, {
-    path: '',
-    component: () => import('./views/comment/index.vue')// 设置为按需加载
+    }, {
+      path: 'comment',
+      component: () => import('./views/comment/index.vue')// 设置为按需加载
+    }
+    ]
   }
     // {
     //   path: '/about',
