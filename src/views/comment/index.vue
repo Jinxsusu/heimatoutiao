@@ -35,7 +35,7 @@ export default {
         this.$axios({
           method: 'put',
           url: 'comments/status',
-          params: { article_id: row.id },
+          params: { article_id: row.id.toString() },
           data: { allow_comment: !row.comment_status }// 修改状态取反
         }).then(res => {
           this.getComments() // 成功之后 重新调用拉取数据的方法
