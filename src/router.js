@@ -5,6 +5,7 @@ import Home from './views/home/home.vue'
 // 相当于我们原来的一个个页面
 import Login from './views/login/index.vue'
 import Main from './views/home/main.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -24,6 +25,9 @@ export default new Router({
       path: '',
       component: Main
     }]
+  }, {
+    path: '',
+    component: () => import('./views/comment/index.vue')// 设置为按需加载
   }
     // {
     //   path: '/about',
