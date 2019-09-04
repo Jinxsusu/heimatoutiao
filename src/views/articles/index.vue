@@ -5,7 +5,7 @@
     </bread-crumb>
     <el-form style="margin-left:40px">
       <el-form-item label="文章状态:">
-        <el-radio-group v-model="radio">
+        <el-radio-group>
           <el-radio>全部</el-radio>
           <el-radio>草稿</el-radio>
           <el-radio>待审核</el-radio>
@@ -32,11 +32,15 @@
       <div v-for="(item,index) in list" :key="index" class="article-item">
         <!-- 左侧内容 -->
         <div class="left">
-          <img src="../../assets/img/404.png" alt />
+          <!-- images 这个是一个数组 第一项是图片地址
+          如果这个数组不为空也就是数组存在数组长度 就取index=0的一项
+          如果为空的话选用默认图片地址 本地图片地址的路径要转成base64字符串格式-->
+          <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt />
           <div class="info">
-            <span class="title">有内鬼交易取消</span>
-            <el-tag style="width:60px">已发表</el-tag>
-            <span class="date">2019-10-11 08:15:22</span>
+            <span class="title">{{item.title}}</span>
+            <!-- 因为文章状态比较多 所有用过滤器来转换 -->
+            <el-tag style="width:60px">{{ item.status|statusText}}</el-tag>
+            <span class="date">{{item.pubdate}}</span>
           </div>
         </div>
         <!-- 右侧内容 -->
@@ -59,7 +63,38 @@
 export default {
   data () {
     return {
-      list: [1, 2, 3, 4, 5, 6, 7]
+      list: [],
+      defaultImg: require('../../assets/img/avatar.jpg') // 转成base64字符串的格式
+    }
+  },
+  methods: {
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(res => {
+        console.log(res)
+        this.list = res.data.results
+      })
+    }
+  },
+  created () {
+    this.getArticles()
+  },
+  filters: {
+    // 定义一个过滤器 改变文字状态的显示
+    statusText: function (value) {
+      switch (value) {
+        case 0:
+          return '草稿' // 因为是过滤器 所以必须要有返回值
+        case 1:
+          return '待审核'
+        case 2:
+          return '已发表'
+        case 3:
+          return '审核失败'
+        default:
+          break // default 固定结尾 以上几种情况都没有出现的话代码停止
+      }
     }
   }
 }
@@ -91,13 +126,13 @@ export default {
         flex-direction: column; //垂直方向布局
         justify-content: space-around; //均匀布局先中间再两边
         margin-left: 10px;
-        .title{
-          font-size:14px;
-          color:#333
+        .title {
+          font-size: 14px;
+          color: #333;
         }
-        .date{
+        .date {
           color: #999;
-          font-size: 12px
+          font-size: 12px;
         }
       }
     }
@@ -107,7 +142,6 @@ export default {
         color: #333;
         margin-right: 8px;
         cursor: pointer; //当鼠标放上去的时候样式改变变成小手
-
       }
     }
   }
