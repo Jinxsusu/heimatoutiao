@@ -33,7 +33,7 @@
         ></el-date-picker>
       </el-form-item>
     </el-form>
-    <div class="total-info">共找到1459条符合条件的内容</div>
+    <div class="total-info">共找到{{page.total}}条符合条件的内容</div>
     <div class="article-list">
       <!-- 循环项 -->
       <div v-for="(item,index) in list" :key="index" class="article-item">
@@ -45,8 +45,8 @@
           <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt />
           <div class="info">
             <span class="title">{{item.title}}</span>
-            <!-- 因为文章状态比较多 所有用过滤器来转换 -->
-            <el-tag style="width:60px">{{ item.status|statusText}}</el-tag>
+            <!-- 因为文章状态比较多 所以用过滤器来转换 插值表达式的内容 -->
+            <el-tag style="width:60px" :type='item.status|statusType'>{{ item.status|statusText}}</el-tag>
             <span class="date">{{item.pubdate}}</span>
           </div>
         </div>
@@ -63,6 +63,17 @@
         </div>
       </div>
     </div>
+    <el-row type="flex" justify="center">
+      <el-pagination
+        style="margin:10px 0"
+        background
+        layout="prev, pager, next"
+        :total="page.total"
+        :current-page="page.page"
+        :page-size="page.pageSize"
+        @current-change="changePage"
+      ></el-pagination>
+    </el-row>
   </el-card>
 </template>
 <script>
@@ -80,15 +91,63 @@ export default {
         channel_id: null, //
         dateRange: [] // 时间选择器 格式是数组格式 显示的时间不是北京时间
       },
-      channels: [] // 频道列表的数据
+      channels: [], // 频道列表的数据
+      page: {
+        page: 1,
+        pageSize: 10,
+        total: 0
+      }
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.page = newPage
+      this.getConditionArticles()
+    //   // 当页码改变的时候 搜索条件也要满足
+    //   let params = {
+    //     status: this.searchForm.status === 5 ? null : this.searchForm.status,
+    //     channel_id: this.searchForm.channel_id,
+    //     begin_pubdate:
+    //       this.searchForm.dateRange.length > 0
+    //         ? this.searchForm.dateRange[0]
+    //         : null,
+    //     end_pubdate:
+    //       this.searchForm.dateRange.length > 1
+    //         ? this.searchForm.dateRange[1]
+    //         : null,
+    //     page: this.page.page,
+    //     per_page: this.page.pageSize
+    //   }
+    //   this.getArticles(params)
+    },
     changeCondition () {
       // 第一次获取文章内容的时候 params为空
       // 当执行changeCondition方法的时候我们传入了刚刚定义好的params 然后又执行getArticles()
       // 频道 状态 日期 都是绑定这个方法
-      // 定义params对象
+      // 定义params对象 条件都要写在一起 满足综合条件返回结果
+      this.page.page = 1
+      this.getConditionArticles()
+    //   let params = {
+    //     // 这个传的是搜索部分的现在的数据
+    //     // 当文章状态是全部的时候 我们设置为5 要让他重新改成null
+    //     status: this.searchForm.status === 5 ? null : this.searchForm.status,
+    //     channel_id: this.searchForm.channel_id,
+    //     begin_pubdate:
+    //       this.searchForm.dateRange.length > 0
+    //         ? this.searchForm.dateRange[0]
+    //         : null,
+    //     end_pubdate:
+    //       this.searchForm.dateRange.length > 1
+    //         ? this.searchForm.dateRange[1]
+    //         : null, // dateRange 是一个数组 它的第一项是begin_pubdate 下标为0 ,如果它没有操作的话就是空 ,如果设置了的话数组长度就要>0 用三元表达式表示如下
+    //     // 当搜索条件改变的时候页码也要跟着改变从1开始
+    //     page: this.page.page,
+    //     per_page: this.page.pageSize
+    //   }
+    //   this.getArticles(params)
+    },
+    // 封装代码 组合条件加页码
+    getConditionArticles () {
       let params = {
         // 这个传的是搜索部分的现在的数据
         // 当文章状态是全部的时候 我们设置为5 要让他重新改成null
@@ -101,11 +160,15 @@ export default {
         end_pubdate:
           this.searchForm.dateRange.length > 1
             ? this.searchForm.dateRange[1]
-            : null
-        // dateRange 是一个数组 它的第一项是begin_pubdate 下标为0 ,如果它没有操作的话就是空 ,如果设置了的话数组长度就要>0 用三元表达式表示如下
+            : null, // dateRange 是一个数组 它的第一项是begin_pubdate 下标为0 ,如果它没有操作的话就是空 ,如果设置了的话数组长度就要>0 用三元表达式表示如下
+        // 当搜索条件改变的时候页码也要跟着改变从1开始
+        page: this.page.page,
+        per_page: this.page.pageSize
       }
       this.getArticles(params)
     },
+
+    // 查询文章列表内容
     getArticles (params) {
       // 第一次获取文章内容的时候 params为空
       // 当执行changeCondition方法的时候我们传入了刚刚定义好的params 然后又执行getArticles()
@@ -115,6 +178,7 @@ export default {
       }).then(res => {
         // console.log(res)
         this.list = res.data.results
+        this.page.total = res.data.total_count
       })
     },
     // 获取文章频道数据
@@ -144,6 +208,21 @@ export default {
           return '已发表'
         case 3:
           return '审核失败'
+        default:
+          break // default 固定结尾 以上几种情况都没有出现的话代码停止
+      }
+    },
+    // 定义类型过滤器
+    statusType (value) {
+      switch (value) {
+        case 0:
+          return 'warning' // 因为是过滤器 所以必须要有返回值
+        case 1:
+          return 'info'
+        case 2:
+          return 'success'
+        case 3:
+          return 'danger'
         default:
           break // default 固定结尾 以上几种情况都没有出现的话代码停止
       }
