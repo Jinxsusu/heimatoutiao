@@ -71,7 +71,7 @@ export default {
       return row.comment_status ? '正常' : '关闭'
     },
     getComments () {
-      // this.loading = true
+      this.loading = true
       // query参数 就相当于 get参数 路径参数 url参数
       this.$axios({
         url: '/articles',
