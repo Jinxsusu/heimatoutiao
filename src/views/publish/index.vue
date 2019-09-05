@@ -44,7 +44,7 @@ export default {
         title: '',
         content: '',
         cover: {
-          type: 0,
+          type: 0, // 设置默认为无图
           images: [] //
         },
         channel_id: null
@@ -79,7 +79,15 @@ export default {
       // validate 是一个方法
       this.$refs.publishForm.validate((isOk) => {
         if (isOk) {
-
+          this.$axios({
+            url: '/articles',
+            method: 'post',
+            params: { draft: false }, // draft是草稿 设置为false 默认设置为不是草稿
+            data: this.formData // data 是body数据和表单呢数据一致
+          }).then(() => {
+            // 发布成功后 编程式导航跳转到文章列表页面
+            this.$router.push('/home/articles')
+          })
         }
       })
     },
