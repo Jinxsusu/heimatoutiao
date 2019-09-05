@@ -46,7 +46,7 @@
           <div class="info">
             <span class="title">{{item.title}}</span>
             <!-- 因为文章状态比较多 所以用过滤器来转换 插值表达式的内容 -->
-            <el-tag style="width:60px" :type='item.status|statusType'>{{ item.status|statusText}}</el-tag>
+            <el-tag style="width:60px" :type="item.status|statusType">{{ item.status|statusText}}</el-tag>
             <span class="date">{{item.pubdate}}</span>
           </div>
         </div>
@@ -56,7 +56,7 @@
             <i class="el-icon-edit"></i>
             修改
           </span>
-          <span>
+          <span @click="delItem(item)">
             <i class="el-icon-delete"></i>
             删除
           </span>
@@ -145,6 +145,18 @@ export default {
     //     per_page: this.page.pageSize
     //   }
     //   this.getArticles(params)
+    },
+    // 删除文章
+    delItem (item) {
+      // 提示用户
+      this.$confirm('您是否要删除此文章?', '提示').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `articles/${item.id.toString()}` // id数字过大=>bigNumber类型=>tiString()方法处理一下
+        }).then(() => {
+          this.getConditionArticles()
+        })
+      })
     },
     // 封装代码 组合条件加页码
     getConditionArticles () {
