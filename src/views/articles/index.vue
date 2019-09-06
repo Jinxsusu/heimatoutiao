@@ -52,7 +52,7 @@
         </div>
         <!-- 右侧内容 -->
         <div class="right">
-          <span>
+          <span  @click="modeifyItem(item)">
             <i class="el-icon-edit"></i>
             修改
           </span>
@@ -100,6 +100,11 @@ export default {
     }
   },
   methods: {
+    // 动态路由携带参数 在路由表上
+    modeifyItem (item) {
+      // 编程式导航 跳转到发布式导航
+      this.$router.push(`/home/publish/${item.id.toString()}`)
+    },
     changePage (newPage) {
       this.page.page = newPage
       this.getConditionArticles()

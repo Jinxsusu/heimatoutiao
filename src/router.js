@@ -37,7 +37,11 @@ export default new Router({
       component: () => import('./views/articles/index.vue')
     },
     {
-      path: 'publish',
+      path: 'publish/:articleId', // 定义动态路由参数
+      component: () => import('./views/publish/index.vue')
+    },
+    {
+      path: 'publish', // 匹配发布文章 不带参数
       component: () => import('./views/publish/index.vue')
     }
     ]
