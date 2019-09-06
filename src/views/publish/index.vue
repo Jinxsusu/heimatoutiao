@@ -4,7 +4,13 @@
       <template slot="title">发表文章</template>
     </bread-crumb>
     <!-- model 是绑定数据  rules是绑定的校验规则  ref绑定表单实例-->
-    <el-form ref="publishForm"  :model="formData" :rules="publishRules" style="margin-left:80px" label-width="100px">
+    <el-form
+      ref="publishForm"
+      :model="formData"
+      :rules="publishRules"
+      style="margin-left:80px"
+      label-width="100px"
+    >
       <el-form-item label="标题" prop="title">
         <el-input v-model="formData.title" style="width:400px"></el-input>
       </el-form-item>
@@ -77,7 +83,7 @@ export default {
     publish () {
       // 校验整个表单 获取el-form 实例
       // validate 是一个方法
-      this.$refs.publishForm.validate((isOk) => {
+      this.$refs.publishForm.validate(isOk => {
         if (isOk) {
           this.$axios({
             url: '/articles',
@@ -97,10 +103,24 @@ export default {
       }).then(res => {
         this.channels = res.data.channels
       })
+    },
+    // 通过id获取文章详情
+    getArticleById (articleId) {
+      this.$axios({
+        // 此时的id是字符串了
+        url: `/articles/${articleId}`
+      }).then(res => {
+        this.formData = res.data
+      })
     }
   },
   created () {
     this.getChannels()
+    let { articleId } = this.$route.params // 获取id
+    if (articleId) {
+    // 调用方法发请求
+      this.getArticleById(articleId)
+    }
   }
 }
 </script>
