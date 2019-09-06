@@ -33,8 +33,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="publish">发表文章</el-button>
-        <el-button>存入草稿</el-button>
+        <el-button type="primary" @click="publish(false)">发表文章</el-button>
+        <el-button @click="publish(true)">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -80,15 +80,17 @@ export default {
   },
   methods: {
     // 发表文章的方法
-    publish () {
+    publish (draft) {
       // 校验整个表单 获取el-form 实例
       // validate 是一个方法
       this.$refs.publishForm.validate(isOk => {
         if (isOk) {
+          // 只有校验成功后才会判断有没有新增还是修改
+          let { articleId } = this.$route.params // 获取id
           this.$axios({
-            url: '/articles',
-            method: 'post',
-            params: { draft: false }, // draft是草稿 设置为false 默认设置为不是草稿
+            url: articleId ? `/articles/${articleId}` : '/articles',
+            method: articleId ? 'put' : 'post',
+            params: { draft }, // draft是草稿 设置为false 默认设置为不是草稿
             data: this.formData // data 是body数据和表单呢数据一致
           }).then(() => {
             // 发布成功后 编程式导航跳转到文章列表页面
