@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item>
         <!-- 封面组件  给父亲绑定 -->
-        <cover-image :images="formData.cover.images"></cover-image>
+        <cover-image @onClickImg="receiveImg" :images="formData.cover.images"></cover-image>
       </el-form-item>
       <el-form-item label="频道" prop="channel_id">
         <el-select v-model="formData.channel_id">
@@ -84,6 +84,21 @@ export default {
     }
   },
   methods: {
+    // 接收子组件传过来的值
+    receiveImg (url, index) {
+      // alert('这是cover-image传过来的地址' + url)
+      // 拿到地址 和index 遍历 images数组
+      // this.formData.cover.images.map(function (item, i) {
+      //   if (i === index) {
+      //     // 如果有index传过来的话 就返回url
+      //     return url
+      //   }
+      //   return item
+      //   // 如果没有的话 就不变
+      // }) map返回的是新数组 再赋值给老数组 老数组的话也是一项一项的url地址
+      this.formData.cover.images = this.formData.cover.images.map((item, i) => i === index ? url : item)
+    },
+
     // 发表文章的方法
     publish (draft) {
       // 校验整个表单 获取el-form 实例
